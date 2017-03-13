@@ -38,8 +38,17 @@ class WeatherViewController: UIViewController {
         cityLabel.text = city
         countryLabel.text = country
         
-        // Invoke weather service to get the weather data
-        WeatherService.sharedWeatherService().getCurrentWeather(location: city + "," + country, completion: { (data) -> () in
+        // Invoke weather service to get the weather data by parsisg JSON
+        
+        let weatherObject = WeatherService ()
+        weatherObject.getCurrentWeather(location: city + "," + country) { (data) in
+            if let weatherData = data {
+                self.weatherLabel.text = weatherData.weather.capitalized
+                self.temperatureLabel.text = String(format: "%d", weatherData.temperature) + "\u{00B0}"
+            }
+        }
+        
+        WeatherService().getCurrentWeather(location: city + "," + country, completion: { (data) -> () in
             OperationQueue.main.addOperation({ () -> Void in
                 if let weatherData = data {
                     self.weatherLabel.text = weatherData.weather.capitalized
